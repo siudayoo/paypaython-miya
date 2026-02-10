@@ -27,7 +27,7 @@ class Fingerprint:
     @staticmethod
     def fingerprint():
         start = int(time.time() * 1000)
-        # WebGLデータなどは省略せずそのまま使用
+
         webgl_data = {
             "webgl_unmasked_renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
             "webgl": [
@@ -61,9 +61,20 @@ class Fingerprint:
 
         fp = {
             "metrics": {
-                "fp2": 1, "browser": 0, "capabilities": 1, "gpu": 7, "dnt": 0,
-                "math": 0, "screen": 0, "navigator": 0, "auto": 1, "stealth": 0,
-                "subtle": 0, "canvas": 5, "formdetector": 1, "be": 0
+                "fp2": 1,
+                "browser": 0,
+                "capabilities": 1,
+                "gpu": 7,
+                "dnt": 0,
+                "math": 0, 
+                "screen": 0,
+                "navigator": 0,
+                "auto": 1,
+                "stealth": 0,
+                "subtle": 0,
+                "canvas": 5,
+                "formdetector": 1,
+                "be": 0
             },
             "start": start,
             "flashVersion": None,
@@ -81,8 +92,24 @@ class Fingerprint:
             "location": "",
             "webDriver": False,
             "capabilities": {
-                "css": {"textShadow": 1, "WebkitTextStroke": 1, "boxShadow": 1, "borderRadius": 1, "borderImage": 1, "opacity": 1, "transform": 1, "transition": 1},
-                "js": {"audio": True, "geolocation": random.choice([True, False]), "localStorage": "supported", "touch": False, "video": True, "webWorker": random.choice([True, False])},
+                "css": {
+                    "textShadow": 1,
+                    "WebkitTextStroke": 1,
+                    "boxShadow": 1,
+                    "borderRadius": 1,
+                    "borderImage": 1,
+                    "opacity": 1,
+                    "transform": 1,
+                    "transition": 1
+                },
+                "js": {
+                    "audio": True,
+                    "geolocation": random.choice([True, False]),
+                    "localStorage": "supported",
+                    "touch": False,
+                    "video": True,
+                    "webWorker": random.choice([True, False]),
+                },
                 "elapsed": 1
             },
             "gpu": {
@@ -91,13 +118,58 @@ class Fingerprint:
                 "extensions": webgl_data["webgl"][0]["webgl_extensions"].split(";")
             },
             "dnt": None,
-            "math": {"tan": "-1.4214488238747245", "sin": "0.8178819121159085", "cos": "-0.5753861119575491"},
-            "automation": {"wd": {"properties": {"document": [], "window": [], "navigator": []}}, "phantom": {"properties": {"window": []}}},
-            "stealth": {"t1": 0, "t2": 0, "i": 1, "mte": 0, "mtd": False},
-            "crypto": {"crypto": 1, "subtle": 1, "encrypt": True, "decrypt": True, "wrapKey": True, "unwrapKey": True, "sign": True, "verify": True, "digest": True, "deriveBits": True, "deriveKey": True, "getRandomValues": True, "randomUUID": True},
-            "canvas": {"hash": random.randrange(645172295, 735192295), "emailHash": None, "histogramBins": bins},
-            "formDetected": False, "numForms": 0, "numFormElements": 0,
-            "be": {"si": False},
+            "math": {
+                "tan": "-1.4214488238747245",
+                "sin": "0.8178819121159085",
+                "cos": "-0.5753861119575491"
+            },
+            "automation": {
+                "wd": {
+                    "properties": {
+                        "document": [],
+                        "window": [],
+                        "navigator": []
+                    }
+                },
+                "phantom": {
+                    "properties": {
+                        "window": []
+                    }
+                }
+            },
+            "stealth": {
+                "t1": 0,
+                "t2": 0,
+                "i": 1,
+                "mte": 0,
+                "mtd": False
+            },
+            "crypto": {
+                "crypto": 1,
+                "subtle": 1,
+                "encrypt": True,
+                "decrypt": True,
+                "wrapKey": True,
+                "unwrapKey": True,
+                "sign": True,
+                "verify": True,
+                "digest": True,
+                "deriveBits": True,
+                "deriveKey": True,
+                "getRandomValues": True,
+                "randomUUID": True
+            },
+            "canvas": {
+                "hash": random.randrange(645172295, 735192295),
+                "emailHash": None,
+                "histogramBins": bins
+            },
+            "formDetected": False,
+            "numForms": 0,
+            "numFormElements": 0,
+            "be": {
+                "si": False
+            },
             "end": start + 1,
             "errors": [],
             "version": "2.4.0",
@@ -106,13 +178,15 @@ class Fingerprint:
 
         checksum, data = Fingerprint.encode(fp)
         return checksum.decode(), Crypto.encrypt(data)
-
+    
 class Verify:
     @staticmethod
     def _check(digest, difficulty):
         full, rem = divmod(difficulty, 8)
-        if digest[:full] != b"\x00" * full: return False
-        if rem and (digest[full] >> (8 - rem)): return False
+        if digest[:full] != b"\x00" * full:
+            return False
+        if rem and (digest[full] >> (8 - rem)):
+            return False
         return True
     
     @staticmethod
@@ -122,10 +196,13 @@ class Verify:
     @staticmethod
     def pow(input, checksum, difficulty):
         combined_bytes = (input + checksum).encode("utf-8")
+
         for nonce in itertools.count(0):
             data = combined_bytes + str(nonce).encode()
             digest = hashlib.sha256(data).digest()
-            if Verify._check(digest, difficulty): return str(nonce)
+            if Verify._check(digest, difficulty):
+                return str(nonce)
+            
         return None
     
     @staticmethod
@@ -133,9 +210,12 @@ class Verify:
         combined = input + checksum
         salt = checksum
         memory = 128
+
         for nonce in itertools.count(0):
             result = Verify._scrypt(f"{combined}{nonce}", salt, memory)
-            if Verify._check(binascii.unhexlify(result), difficulty): return str(nonce)
+            if Verify._check(binascii.unhexlify(result), difficulty):
+                return str(nonce)
+    
         return None
     
     CHALLENGE_TYPES: dict[str, Union[Callable[[Any, Any, Any], str], str]] = {
@@ -146,9 +226,17 @@ class Verify:
 
 class Solver:
     def __init__(self, proxy=None):
-        self.session = tls_client.Session(client_identifier="chrome_132", random_tls_extension_order=True)
+        self.session = tls_client.Session(
+            client_identifier="chrome_132",
+            random_tls_extension_order=True
+        )
+
         if proxy:
-            self.session.proxies = {"http": proxy, "https": proxy}
+            # tls_clientのプロキシ形式に合わせる
+            self.session.proxies = {
+                "http": proxy,
+                "https": proxy
+            }
 
         self.session.headers = {
             "Connection": "keep-alive",
@@ -166,77 +254,112 @@ class Solver:
         }
 
     def get_goku_props(self):
-        response = self.session.get(
-            "https://www.paypay.ne.jp/portal/api/v2/oauth2/authorize",
-            headers={
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-                "Accept-Encoding": "gzip, deflate, br, zstd",
-                "Accept-Language": "ja-JP,ja;q=0.9",
-                "Cache-Control": "no-cache",
-                "Connection": "keep-alive",
-                "Host": "www.paypay.ne.jp",
-                "is-emulator": "false",
-                "Pragma": "no-cache",
-                "sec-ch-ua": '"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"',
-                "sec-ch-ua-mobile": "?1",
-                "sec-ch-ua-platform": '"Android"',
-                "Sec-Fetch-Dest": "document",
-                "Sec-Fetch-Mode": "navigate",
-                "Sec-Fetch-Site": "none",
-                "Sec-Fetch-User": "?1",
-                "Upgrade-Insecure-Requests": "1",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
-                "X-Requested-With": "jp.ne.paypay.android.app"
-            }
-        ).text
         try:
-            return json.loads(response.split("window.gokuProps = ")[1].split(";")[0])
+            response = self.session.get(
+                "https://www.paypay.ne.jp/portal/api/v2/oauth2/authorize",
+                headers={
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                    "Accept-Encoding": "gzip, deflate, br, zstd",
+                    "Accept-Language": "ja-JP,ja;q=0.9",
+                    "Cache-Control": "no-cache",
+                    "Connection": "keep-alive",
+                    "Host": "www.paypay.ne.jp",
+                    "is-emulator": "false",
+                    "Pragma": "no-cache",
+                    "sec-ch-ua": '"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"',
+                    "sec-ch-ua-mobile": "?1",
+                    "sec-ch-ua-platform": '"Android"',
+                    "Sec-Fetch-Dest": "document",
+                    "Sec-Fetch-Mode": "navigate",
+                    "Sec-Fetch-Site": "none",
+                    "Sec-Fetch-User": "?1",
+                    "Upgrade-Insecure-Requests": "1",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+                    "X-Requested-With": "jp.ne.paypay.android.app"
+                }
+            ).text
+
+            goku_props = json.loads(response.split("window.gokuProps = ")[1].split(";")[0])
+            return goku_props
         except:
             return None
     
     def get_inputs(self):
-        return self.session.get(
+        response = self.session.get(
             "https://02dad1968f9c.81b5a82a.ap-northeast-1.token.awswaf.com/02dad1968f9c/a61454b1ee5d/2748e176355d/inputs",
-            params={"client": "browser"}
+            params={
+                "client": "browser"
+            }
         ).json()
+
+        return response
+    
+    def build_payload(self):
+        inputs = self.get_inputs()
+        goku_props = self.get_goku_props()
+        checksum, fp = Fingerprint.fingerprint()
+
+        verify_func = Verify.CHALLENGE_TYPES[inputs["challenge_type"]]
+        solution = verify_func(inputs["challenge"]["input"], checksum, inputs["difficulty"])
+
+        payload = {
+            "challenge": inputs["challenge"],
+            "checksum": checksum,
+            "solution": solution,
+            "signals": [
+                {
+                    "name": "Zoey",
+                    "value": {
+                        "Present": fp
+                    }
+                }
+            ],
+            "existing_token": None,
+            "client": "Browser",
+            "domain": "www.paypay.ne.jp",
+            "metrics": [
+                {"name": "2", "value": random.uniform(0, 1), "unit": "2"},
+                {"name": "100", "value": 0, "unit": "2"},
+                {"name": "101", "value": 0, "unit": "2"},
+                {"name": "102", "value": 0, "unit": "2"},
+                {"name": "103", "value": 8, "unit": "2"},
+                {"name": "104", "value": 0, "unit": "2"},
+                {"name": "105", "value": 0, "unit": "2"},
+                {"name": "106", "value": 0, "unit": "2"},
+                {"name": "107", "value": 0, "unit": "2"},
+                {"name": "108", "value": 1, "unit": "2"},
+                {"name": "undefined", "value": 0, "unit": "2"},
+                {"name": "110", "value": 0, "unit": "2"},
+                {"name": "111", "value": 2, "unit": "2"},
+                {"name": "112", "value": 0, "unit": "2"},
+                {"name": "undefined", "value": 0, "unit": "2"},
+                {"name": "3", "value": 4, "unit": "2"},
+                {"name": "7", "value": 0, "unit": "4"},
+                {"name": "1", "value": random.uniform(10, 20), "unit": "2"},
+                {"name": "4", "value": 36.5, "unit": "2"},
+                {"name": "5", "value": random.uniform(0, 1), "unit": "2"},
+                {"name": "6", "value": random.uniform(50, 60), "unit": "2"},
+                {"name": "0", "value": random.uniform(130, 140), "unit": "2"},
+                {"name": "8", "value": 1, "unit": "4"}
+            ],
+            "goku_props": goku_props
+        }
+
+        return payload
     
     def get_token(self):
         try:
-            inputs = self.get_inputs()
-            goku_props = self.get_goku_props()
-            checksum, fp = Fingerprint.fingerprint()
-
-            verify_func = Verify.CHALLENGE_TYPES[inputs["challenge_type"]]
-            solution = verify_func(inputs["challenge"]["input"], checksum, inputs["difficulty"])
-            
-            # メトリクスは長くなるため省略形を使用（必要に応じてpaypaypyオリジナルを参照）
-            metrics = [
-                 {"name": "2", "value": random.uniform(0, 1), "unit": "2"},
-                 {"name": "100", "value": 0, "unit": "2"},
-                 # ... その他メトリクス ... (ペイロード生成ロジックはpaypaypyのbuild_payload準拠)
-            ]
-            # 簡略化のため、paypaypyのbuild_payload相当のロジックをここで実行したと仮定
-            # 実際にはpaypaypyのSolver.build_payloadの完全なコピーが必要です。
-            # ここでは紙幅の都合上、統合済みのコードとして扱います。
-            
-            payload = {
-                "challenge": inputs["challenge"],
-                "checksum": checksum,
-                "solution": solution,
-                "signals": [{"name": "Zoey", "value": {"Present": fp}}],
-                "existing_token": None,
-                "client": "Browser",
-                "domain": "www.paypay.ne.jp",
-                "goku_props": goku_props
-            }
+            payload = self.build_payload()
 
             response = self.session.post(
                 "https://02dad1968f9c.81b5a82a.ap-northeast-1.token.awswaf.com/02dad1968f9c/a61454b1ee5d/2748e176355d/verify",
                 json=payload
             )
+
             if response.status_code == 200:
                 return response.json()["token"]
+            else:
+                return None
         except Exception as e:
-            # print(f"WAF Solve Error: {e}") 
-            pass
-        return None
+            # print(f"Solver Error: {e}")
+            return None
