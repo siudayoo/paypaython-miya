@@ -1,18 +1,20 @@
 import os
 import base64
+
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-# paypaypyのキーを使用
 key = bytes.fromhex("6f71a512b1e035eaab53d8be73120d3fb68a0ca346b9560aab3e5cdf753d5e98")
 aes_gcm = AESGCM(key)
 
 class Crypto:
     @staticmethod
     def encrypt(string):
+        # 文字列が渡された場合はバイト列に変換
         if isinstance(string, str):
             string = string.encode('utf-8')
-            
+
         iv = os.urandom(12)
+
         encrypted = aes_gcm.encrypt(iv, string, None)
 
         tag = encrypted[-16:]
