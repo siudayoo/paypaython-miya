@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "miya-pay"
-version = "0.1.0"
+name = "paypaython-miya"
+version = "2.5.0"
 description = "PayPay API wrapper with AWS WAF Solver (Based on PayPaython-mobile & paypaypy)"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -26,4 +26,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/yourusername/paypaython-boost"
+"Homepage" = "https://github.com/siudayoo/paypaython-miya"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/siudayoo/paypaython-miya"
