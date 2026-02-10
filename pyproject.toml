@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "paypaython-miya"
-version = "2.5.0"
+version = "0.2.0"
 description = "PayPay API wrapper with AWS WAF Solver (Based on PayPaython-mobile & paypaypy)"
 readme = "README.md"
 requires-python = ">=3.9"
